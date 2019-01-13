@@ -32,7 +32,7 @@ public class Movie implements Serializable {
     @Getter
     @Setter
     @SerializedName("vote_average")
-    private double voteAverage;
+    private float voteAverage;
 
     @Getter
     @Setter
