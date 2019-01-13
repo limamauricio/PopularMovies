@@ -2,12 +2,13 @@ package com.limamauricio.popularmovies.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
-public class MoviesRequestResponse {
+public class MoviesRequestResponse implements Serializable {
 
     @Getter
     @Setter
