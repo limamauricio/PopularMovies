@@ -17,6 +17,7 @@ import com.limamauricio.popularmovies.utils.MovieOnClickListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+@SuppressWarnings("WeakerAccess")
 public class MovieViewHolder extends RecyclerView.ViewHolder {
 
     @BindView(R.id.img_movie)
@@ -25,8 +26,6 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.movie_item)
     CardView movieItem;
 
-    private String IMAGE_URL = "http://image.tmdb.org/t/p/w185";
-
     public MovieViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
@@ -34,7 +33,6 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(final Movie movie, final MovieOnClickListener movieOnClickListener){
-
 
         if(itemView.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
 
@@ -50,7 +48,8 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
         }
 
 
-        Glide.with(itemView).load(IMAGE_URL+movie.getImgPath()).into(imgMovie);
+        String IMAGE_URL = "http://image.tmdb.org/t/p/w185";
+        Glide.with(itemView).load(IMAGE_URL +movie.getImgPath()).into(imgMovie);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override

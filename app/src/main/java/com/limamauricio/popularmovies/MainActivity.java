@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,8 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.limamauricio.popularmovies.model.Movie;
@@ -36,13 +33,14 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String API_KEY = "API_KEY";
+    private static final String API_KEY = "9bf24007f4bba877652bf674e674b0b9";
     private static int totalPages;
-    private static int sortMode = 1;
+    private static int sort = 1;
     private Call<MoviesRequestResponse> call;
     private List<Movie> movieList;
     private MovieAdapter movieAdapter;
 
+    @SuppressWarnings("WeakerAccess")
     @BindView(R.id.movieRecyclerView)
     RecyclerView movieRecyclerView;
 
@@ -51,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        checkNetwork(getApplicationContext());
+        checkNetworkConnection(getApplicationContext());
     }
 
 
     private void initLayout(){
 
-        GridLayoutManager manager = null;
+        GridLayoutManager manager = new GridLayoutManager(this,2);
         if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
             manager = new GridLayoutManager(this,4);
         }else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
@@ -89,9 +87,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadPage(final int page) {
-        Proxy proxy = ProxyFactory.getInstace().create(Proxy.class);
+        Proxy proxy = ProxyFactory.getInstance().create(Proxy.class);
 
-        switch(sortMode){
+        switch(sort){
             case 1:
                 call = proxy.getPopularMovies(page, API_KEY);
                 break;
@@ -132,15 +130,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<MoviesRequestResponse> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "Failed to get movies. Please, try again.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.failed_to_get_movies), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void checkNetwork(Context context){
+    private void checkNetworkConnection(Context context){
 
         if(!isConnectedToInternet(context)){
-            Toast.makeText(MainActivity.this, "No internet connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
         }else {
             initLayout();
         }
@@ -165,10 +163,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popular:
-                sortMode = 1;
+                sort = 1;
                 break;
             case R.id.top_rated:
-                sortMode = 2;
+                sort = 2;
                 break;
         }
         loadPage(1);

@@ -22,7 +22,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     }
 
-
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {

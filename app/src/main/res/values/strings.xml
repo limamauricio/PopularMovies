@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="movie_poster">movie poster</string>
+    <string name="overview">Overview</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="failed_to_get_movies">Failed to get movies. Please, try again.</string>
 </resources>
