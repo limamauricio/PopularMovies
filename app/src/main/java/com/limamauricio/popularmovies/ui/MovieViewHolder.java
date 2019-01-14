@@ -2,14 +2,21 @@ package com.limamauricio.popularmovies.ui;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.limamauricio.popularmovies.R;
 import com.limamauricio.popularmovies.model.Movie;
 import com.limamauricio.popularmovies.utils.MovieOnClickListener;
@@ -49,7 +56,9 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
 
 
         String IMAGE_URL = "http://image.tmdb.org/t/p/w185";
-        Glide.with(itemView).load(IMAGE_URL +movie.getImgPath()).into(imgMovie);
+        Glide.with(itemView)
+                .load(IMAGE_URL +movie.getImgPath())
+                .into(imgMovie);
 
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
