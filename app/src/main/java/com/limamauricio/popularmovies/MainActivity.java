@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.limamauricio.popularmovies.model.Movie;
@@ -34,7 +34,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String API_KEY = "9bf24007f4bba877652bf674e674b0b9";
+    private static final String API_KEY = "API_KEY";
     private static int totalPages;
     private static int sort = 1;
     private Call<MoviesRequestResponse> call;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
         call.enqueue(new Callback<MoviesRequestResponse>() {
             @Override
-            public void onResponse(Call<MoviesRequestResponse> call, Response<MoviesRequestResponse> response) {
+            public void onResponse(@NonNull Call<MoviesRequestResponse> call, @NonNull Response<MoviesRequestResponse> response) {
 
                 if(page == 1) {
                     movieList = response.body().getMovieList();
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<MoviesRequestResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<MoviesRequestResponse> call, @NonNull Throwable t) {
                 Toast.makeText(MainActivity.this, getString(R.string.failed_to_get_movies), Toast.LENGTH_SHORT).show();
             }
         });

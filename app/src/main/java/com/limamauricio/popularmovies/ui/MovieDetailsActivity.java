@@ -49,7 +49,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     private void prepareDetailsLayout(Movie movieDetail){
 
-        String IMAGE_URL = "http://image.tmdb.org/t/p/w500";
+        String IMAGE_URL = "http://image.tmdb.org/t/p/w780";
         Glide.with(this).load(IMAGE_URL +movieDetail.getImgPath()).into(movieDetailsPoster);
         movieDetailsTitle.setText(movieDetail.getTitle());
         movieDetailsOverview.setText(movieDetail.getOverview());

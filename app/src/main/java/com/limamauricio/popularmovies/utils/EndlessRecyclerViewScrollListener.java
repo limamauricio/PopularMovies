@@ -1,5 +1,6 @@
 package com.limamauricio.popularmovies.utils;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,7 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     }
 
     @Override
-    public void onScrolled(RecyclerView view, int dx, int dy) {
+    public void onScrolled(@NonNull RecyclerView view, int dx, int dy) {
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
 
