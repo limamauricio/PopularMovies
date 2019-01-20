@@ -90,50 +90,56 @@ public class MainActivity extends AppCompatActivity {
     private void loadPage(final int page) {
         Proxy proxy = ProxyFactory.getInstance().create(Proxy.class);
 
-        switch(sort){
-            case 1:
-                call = proxy.getPopularMovies(page, API_KEY);
-                break;
-            case 2:
-                call = proxy.getTopMovies(page, API_KEY);
-                break;
-        }
+        if (isConnectedToInternet(getApplicationContext())){
+            switch(sort){
+                case 1:
+                    call = proxy.getPopularMovies(page, API_KEY);
+                    break;
+                case 2:
+                    call = proxy.getTopMovies(page, API_KEY);
+                    break;
+            }
 
 
-        call.enqueue(new Callback<MoviesRequestResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<MoviesRequestResponse> call, @NonNull Response<MoviesRequestResponse> response) {
+            call.enqueue(new Callback<MoviesRequestResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<MoviesRequestResponse> call, @NonNull Response<MoviesRequestResponse> response) {
 
-                if(page == 1) {
-                    movieList = response.body().getMovieList();
-                    totalPages = response.body().getTotalPages();
+                    if(page == 1) {
+                        movieList = response.body().getMovieList();
+                        totalPages = response.body().getTotalPages();
 
-                    movieAdapter = new MovieAdapter(movieList, new MovieOnClickListener() {
-                        @Override
-                        public void onMovieClick(Movie movie) {
-                            Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("movie", movie);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                        movieAdapter = new MovieAdapter(movieList, new MovieOnClickListener() {
+                            @Override
+                            public void onMovieClick(Movie movie) {
+                                Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("movie", movie);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+                            }
+                        });
+                        movieRecyclerView.setAdapter(movieAdapter);
+                    } else {
+                        List<Movie> movies = response.body().getMovieList();
+                        for(Movie movie : movies){
+                            movieList.add(movie);
+                            movieAdapter.notifyItemInserted(movieList.size() - 1);
                         }
-                    });
-                    movieRecyclerView.setAdapter(movieAdapter);
-                } else {
-                    List<Movie> movies = response.body().getMovieList();
-                    for(Movie movie : movies){
-                        movieList.add(movie);
-                        movieAdapter.notifyItemInserted(movieList.size() - 1);
                     }
+
                 }
 
-            }
+                @Override
+                public void onFailure(@NonNull Call<MoviesRequestResponse> call, @NonNull Throwable t) {
+                    Toast.makeText(MainActivity.this, getString(R.string.failed_to_get_movies), Toast.LENGTH_SHORT).show();
+                }
+            });
 
-            @Override
-            public void onFailure(@NonNull Call<MoviesRequestResponse> call, @NonNull Throwable t) {
-                Toast.makeText(MainActivity.this, getString(R.string.failed_to_get_movies), Toast.LENGTH_SHORT).show();
-            }
-        });
+        }else {
+            Toast.makeText(MainActivity.this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void checkNetworkConnection(Context context){
@@ -149,8 +155,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean isConnectedToInternet(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        NetworkInfo i = cm.getActiveNetworkInfo();
+        if (i == null)
+            return false;
+        if (!i.isConnected())
+            return false;
+        if (!i.isAvailable())
+            return false;
+        return true;
     }
 
     @Override
