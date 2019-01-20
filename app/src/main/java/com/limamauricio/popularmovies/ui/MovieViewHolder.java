@@ -26,6 +26,8 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.movie_item)
     CardView movieItem;
 
+    private final String IMAGE_URL = "http://image.tmdb.org/t/p/w185";
+
     public MovieViewHolder(@NonNull View itemView) {
         super(itemView);
         ButterKnife.bind(this,itemView);
@@ -34,21 +36,14 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(final Movie movie, final MovieOnClickListener movieOnClickListener){
 
+        int screenFactor = 2;
         if(itemView.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-
-            movieItem.setLayoutParams(new ViewGroup.LayoutParams(
-                    getScreenWidth()/4,
-                    getMeasuredPosterHeight(getScreenWidth()/4)));
-
-        }else if(itemView.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
-
-            movieItem.setLayoutParams(new ViewGroup.LayoutParams(
-                    getScreenWidth()/2,
-                    getMeasuredPosterHeight(getScreenWidth()/2)));
+            screenFactor = 4;
         }
 
-
-        String IMAGE_URL = "http://image.tmdb.org/t/p/w185";
+        movieItem.setLayoutParams(new ViewGroup.LayoutParams(
+                getScreenWidth()/screenFactor,
+                getMeasuredPosterHeight(getScreenWidth()/screenFactor)));
         Glide.with(itemView)
                 .load(IMAGE_URL +movie.getImgPath())
                 .into(imgMovie);
