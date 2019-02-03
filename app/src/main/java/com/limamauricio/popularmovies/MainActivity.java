@@ -34,7 +34,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String API_KEY = "API_KEY";
+    private static final String API_KEY = BuildConfig.ApiKey;
     private static int totalPages;
     private static int sort = 1;
     private Call<MoviesRequestResponse> call;
