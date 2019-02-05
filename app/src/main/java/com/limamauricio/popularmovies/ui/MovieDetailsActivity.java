@@ -18,10 +18,13 @@ import com.bumptech.glide.Glide;
 import com.limamauricio.popularmovies.BuildConfig;
 import com.limamauricio.popularmovies.R;
 import com.limamauricio.popularmovies.model.Movie;
+import com.limamauricio.popularmovies.model.Review;
+import com.limamauricio.popularmovies.model.ReviewsRequestResponse;
 import com.limamauricio.popularmovies.model.Trailer;
 import com.limamauricio.popularmovies.model.TrailersRequestResponse;
 import com.limamauricio.popularmovies.proxy.Proxy;
 import com.limamauricio.popularmovies.proxy.ProxyFactory;
+import com.limamauricio.popularmovies.ui.review.ReviewAdapter;
 import com.limamauricio.popularmovies.ui.trailers.TrailerAdapter;
 import com.limamauricio.popularmovies.utils.OnClickListenerEvent;
 
@@ -54,8 +57,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @BindView(R.id.trailerRecyclerView)
     RecyclerView trailerRecyclerView;
 
+    @BindView(R.id.reviewRecyclerView)
+    RecyclerView reviewRecyclerView;
+
     private List<Trailer> trailerList;
+    private List<Review> reviewList;
     private TrailerAdapter trailerAdapter;
+    private ReviewAdapter reviewAdapter;
     private final String YOUTUBE_URL = "http://www.youtube.com/watch?v=";
 
     @Override
@@ -81,6 +89,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
         releaseDate.setText(movieDetail.getReleaseDate());
         ratingBar.setRating(movieDetail.getVoteAverage());
         prepareTrailerLayout();
+        prepareReviewLayout();
+        getReviewById(movieDetail.getId());
         getTrailerById(movieDetail.getId());
 
     }
@@ -90,6 +100,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         trailerRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this,
                         LinearLayoutManager.HORIZONTAL, true));
+
+    }
+
+    private void prepareReviewLayout(){
+
+        reviewRecyclerView.setLayoutManager(
+                new LinearLayoutManager(this));
 
     }
 
@@ -115,8 +132,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                         @Override
                         public void onTrailerClick(Trailer trailer) {
 
-
-
                             Intent intent = new Intent(Intent.ACTION_VIEW,
                                     Uri.parse(YOUTUBE_URL + trailer.getKey()));
 
@@ -141,6 +156,37 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     }
 
+
+    private void getReviewById(int movieId){
+
+        Proxy proxy = ProxyFactory.getInstance().create(Proxy.class);
+
+        if (isConnectedToInternet(getApplicationContext())){
+
+            Call<ReviewsRequestResponse> call = proxy.getReviews(movieId, BuildConfig.ApiKey);
+
+            call.enqueue(new Callback<ReviewsRequestResponse>() {
+                @Override
+                public void onResponse(Call<ReviewsRequestResponse> call, Response<ReviewsRequestResponse> response) {
+
+                    reviewList = response.body().getReviewList();
+                    reviewAdapter = new ReviewAdapter(reviewList);
+                    reviewRecyclerView.setAdapter(reviewAdapter);
+
+                }
+
+                @Override
+                public void onFailure(Call<ReviewsRequestResponse> call, Throwable t) {
+                    Toast.makeText(MovieDetailsActivity.this, getString(R.string.failed_to_get_trailers), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }else {
+            Toast.makeText(MovieDetailsActivity.this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
     private boolean isConnectedToInternet(Context context) {
         ConnectivityManager cm =
