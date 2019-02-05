@@ -1,18 +1,37 @@
 package com.limamauricio.popularmovies.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.limamauricio.popularmovies.BuildConfig;
 import com.limamauricio.popularmovies.R;
 import com.limamauricio.popularmovies.model.Movie;
+import com.limamauricio.popularmovies.model.Trailer;
+import com.limamauricio.popularmovies.model.TrailersRequestResponse;
+import com.limamauricio.popularmovies.proxy.Proxy;
+import com.limamauricio.popularmovies.proxy.ProxyFactory;
+import com.limamauricio.popularmovies.ui.trailers.TrailerAdapter;
+import com.limamauricio.popularmovies.utils.OnClickListenerEvent;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @SuppressWarnings("WeakerAccess")
 public class MovieDetailsActivity extends AppCompatActivity {
@@ -32,6 +51,12 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @BindView(R.id.movieDetailsRating)
     RatingBar ratingBar;
 
+    @BindView(R.id.trailerRecyclerView)
+    RecyclerView trailerRecyclerView;
+
+    private List<Trailer> trailerList;
+    private TrailerAdapter trailerAdapter;
+    private final String YOUTUBE_URL = "http://www.youtube.com/watch?v=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +80,78 @@ public class MovieDetailsActivity extends AppCompatActivity {
         movieDetailsOverview.setText(movieDetail.getOverview());
         releaseDate.setText(movieDetail.getReleaseDate());
         ratingBar.setRating(movieDetail.getVoteAverage());
+        prepareTrailerLayout();
+        getTrailerById(movieDetail.getId());
+
+    }
+
+    private void prepareTrailerLayout(){
+
+        trailerRecyclerView.setLayoutManager(
+                new LinearLayoutManager(this,
+                        LinearLayoutManager.HORIZONTAL, true));
+
+    }
+
+    private void getTrailerById(int movieId){
+
+        Proxy proxy = ProxyFactory.getInstance().create(Proxy.class);
+
+        if (isConnectedToInternet(getApplicationContext())){
+
+            Call<TrailersRequestResponse> call = proxy.getTrailers(movieId, BuildConfig.ApiKey);
+
+            call.enqueue(new Callback<TrailersRequestResponse>() {
+                @Override
+                public void onResponse(Call<TrailersRequestResponse> call, Response<TrailersRequestResponse> response) {
+
+                    trailerList = response.body().getTrailerList();
+                    trailerAdapter = new TrailerAdapter(trailerList, new OnClickListenerEvent() {
+                        @Override
+                        public void onMovieClick(Movie movie) {
+
+                        }
+
+                        @Override
+                        public void onTrailerClick(Trailer trailer) {
 
 
 
+                            Intent intent = new Intent(Intent.ACTION_VIEW,
+                                    Uri.parse(YOUTUBE_URL + trailer.getKey()));
+
+                            startActivity(intent);
+                        }
+                    });
+                    trailerRecyclerView.setAdapter(trailerAdapter);
+
+
+                }
+
+                @Override
+                public void onFailure(Call<TrailersRequestResponse> call, Throwable t) {
+                    Toast.makeText(MovieDetailsActivity.this, getString(R.string.failed_to_get_trailers), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+
+        }else {
+            Toast.makeText(MovieDetailsActivity.this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    private boolean isConnectedToInternet(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo i = cm.getActiveNetworkInfo();
+        if (i == null)
+            return false;
+        if (!i.isConnected())
+            return false;
+        if (!i.isAvailable())
+            return false;
+        return true;
     }
 }

@@ -1,4 +1,4 @@
-package com.limamauricio.popularmovies.ui;
+package com.limamauricio.popularmovies.ui.movie;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -7,18 +7,18 @@ import android.view.ViewGroup;
 
 import com.limamauricio.popularmovies.R;
 import com.limamauricio.popularmovies.model.Movie;
-import com.limamauricio.popularmovies.utils.MovieOnClickListener;
+import com.limamauricio.popularmovies.utils.OnClickListenerEvent;
 
 import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     private final List<Movie> movieList;
-    private final MovieOnClickListener movieOnClickListener;
+    private final OnClickListenerEvent onClickListenerEvent;
 
-    public MovieAdapter(List<Movie> movies, MovieOnClickListener movie) {
+    public MovieAdapter(List<Movie> movies, OnClickListenerEvent movie) {
         this.movieList = movies;
-        this.movieOnClickListener = movie;
+        this.onClickListenerEvent = movie;
 
     }
 
@@ -33,7 +33,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int i) {
         Movie movie = this.movieList.get(i);
-        movieViewHolder.bind(movie, movieOnClickListener);
+        movieViewHolder.bind(movie, onClickListenerEvent);
 
     }
 

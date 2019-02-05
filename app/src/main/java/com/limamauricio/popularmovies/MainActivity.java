@@ -17,12 +17,13 @@ import android.widget.Toast;
 
 import com.limamauricio.popularmovies.model.Movie;
 import com.limamauricio.popularmovies.model.MoviesRequestResponse;
+import com.limamauricio.popularmovies.model.Trailer;
 import com.limamauricio.popularmovies.proxy.Proxy;
 import com.limamauricio.popularmovies.proxy.ProxyFactory;
-import com.limamauricio.popularmovies.ui.MovieAdapter;
+import com.limamauricio.popularmovies.ui.movie.MovieAdapter;
 import com.limamauricio.popularmovies.ui.MovieDetailsActivity;
 import com.limamauricio.popularmovies.utils.EndlessRecyclerViewScrollListener;
-import com.limamauricio.popularmovies.utils.MovieOnClickListener;
+import com.limamauricio.popularmovies.utils.OnClickListenerEvent;
 
 import java.util.List;
 
@@ -100,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-
             call.enqueue(new Callback<MoviesRequestResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<MoviesRequestResponse> call, @NonNull Response<MoviesRequestResponse> response) {
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                         movieList = response.body().getMovieList();
                         totalPages = response.body().getTotalPages();
 
-                        movieAdapter = new MovieAdapter(movieList, new MovieOnClickListener() {
+                        movieAdapter = new MovieAdapter(movieList, new OnClickListenerEvent() {
                             @Override
                             public void onMovieClick(Movie movie) {
                                 Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
@@ -117,6 +117,11 @@ public class MainActivity extends AppCompatActivity {
                                 bundle.putSerializable("movie", movie);
                                 intent.putExtras(bundle);
                                 startActivity(intent);
+                            }
+
+                            @Override
+                            public void onTrailerClick(Trailer trailer) {
+
                             }
                         });
                         movieRecyclerView.setAdapter(movieAdapter);

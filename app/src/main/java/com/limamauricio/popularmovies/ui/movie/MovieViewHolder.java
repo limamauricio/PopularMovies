@@ -1,4 +1,4 @@
-package com.limamauricio.popularmovies.ui;
+package com.limamauricio.popularmovies.ui.movie;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.limamauricio.popularmovies.R;
 import com.limamauricio.popularmovies.model.Movie;
-import com.limamauricio.popularmovies.utils.MovieOnClickListener;
+import com.limamauricio.popularmovies.utils.OnClickListenerEvent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-    public void bind(final Movie movie, final MovieOnClickListener movieOnClickListener){
+    public void bind(final Movie movie, final OnClickListenerEvent onClickListenerEvent){
 
         int screenFactor = 2;
         if(itemView.getContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
@@ -51,7 +51,7 @@ public class MovieViewHolder extends RecyclerView.ViewHolder {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                movieOnClickListener.onMovieClick(movie);
+                onClickListenerEvent.onMovieClick(movie);
             }
         });
     }
