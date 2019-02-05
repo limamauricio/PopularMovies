@@ -172,7 +172,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     reviewList = response.body().getReviewList();
                     reviewAdapter = new ReviewAdapter(reviewList);
                     reviewRecyclerView.setAdapter(reviewAdapter);
-
                 }
 
                 @Override
