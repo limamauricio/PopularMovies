@@ -1,6 +1,7 @@
 package com.limamauricio.popularmovies.proxy;
 
 import com.limamauricio.popularmovies.model.MoviesRequestResponse;
+import com.limamauricio.popularmovies.model.ReviewsRequestResponse;
 import com.limamauricio.popularmovies.model.TrailersRequestResponse;
 
 import retrofit2.Call;
@@ -22,5 +23,9 @@ public interface Proxy {
     @GET("movie/{id}/videos")
     Call<TrailersRequestResponse> getTrailers(@Path("id") int id,
                                               @Query("api_key") String api);
+
+    @GET("movie/{id}/reviews")
+    Call<ReviewsRequestResponse> getReviews(@Path("id") int id,
+                                             @Query("api_key") String api);
 
 }
